@@ -1,8 +1,9 @@
 import React from 'react';
-import {createAppContainer} from 'react-navigation';
+import {View,SafeAreaView,Button} from 'react-native';
+import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createDrawerNavigator,DrawerItems} from 'react-navigation-drawer';
 import {createMaterialBottomTabNavigator} from 'react-navigation-material-bottom-tabs';
 
 import CategoriesScreen from '../screens/CategoriesScreen';
@@ -10,6 +11,8 @@ import CategoryMealsScreen from '../screens/CategoryMealsScreen';
 import MealDetailScreen from '../screens/MealDetailScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import FiltersScreen from '../screens/FiltersScreen';
+import RegisterScreen from '../screens/RegisterScreen';
+import LoginScreen from '../screens/LoginScreen';
 import {Platform} from 'react-native';
 import Colors from '../constants/Colors';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -27,6 +30,7 @@ const defaultStackNavOptions = {
   headerTintColor: Platform.OS === 'android' ? 'white' : Colors.primaryColor,
   headerTitle: 'A screen',
 };
+
 const MealsNavigator = createStackNavigator(
   {
     Categories: {
@@ -51,6 +55,7 @@ const FavNavigator = createStackNavigator(
     defaultNavigationOptions: defaultStackNavOptions,
   },
 );
+
 const tabScreenConfig = {
   Meals: {
     screen: MealsNavigator,
@@ -96,7 +101,17 @@ const FiltersNavigator = createStackNavigator(
   },
 );
 
-const MainNavigator = createDrawerNavigator(
+const AuthNavigator = createStackNavigator(
+  {
+    Login: LoginScreen,
+    Register: RegisterScreen,
+  },
+  {
+    defaultNavigationOptions: defaultStackNavOptions,
+  },
+);
+
+const MainDrawerNavigator = createDrawerNavigator(
   {
     MealsFavs: {
       screen: MealsFavTabNavigator,
@@ -110,8 +125,30 @@ const MainNavigator = createDrawerNavigator(
     contentOptions: {
       activeTintColor: Colors.accentColor,
     },
+    contentComponent: (props) => {
+      return (
+        <View style={{flex: 1, paddingTop: 20}}>
+          <SafeAreaView forceInset={{top: 'always', horizontal: 'never'}}>
+            <DrawerItems {...props} />
+            <Button
+              title="Logout"
+              color='#4a148c'
+              onPress={() => {
+                props.navigation.navigate('Login');
+              }}
+            />
+          </SafeAreaView>
+        </View>
+      );
+    },
   },
 );
+
+const MainNavigator = createSwitchNavigator({
+  Auth: AuthNavigator,
+  Main: MainDrawerNavigator,
+});
+
 // const MealsFavTabNavigator = createBottomTabNavigator(
 //     {
 //         Meals: {
