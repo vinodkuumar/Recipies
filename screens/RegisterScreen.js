@@ -38,14 +38,9 @@ const RegisterScreen = (navData) => {
         validationSchema={formSchema}
         onSubmit={(values) => {
           dispatch(authAction.registerUser(values))
-            .then(async (result) => {
+            .then((result) => {
               if (result.success) {
-                try {
-                  await AsyncStorage.setItem('token', token);
-                  navData.navigation.navigate('Main');
-                } catch (err) {
-                  console.log(err);
-                }
+                navData.navigation.navigate('Main');
               } else {
                 Alert.alert('Registration failed. Try again!');
               }
@@ -117,8 +112,8 @@ const RegisterScreen = (navData) => {
 };
 
 RegisterScreen.navigationOptions = {
-  headerTitle: 'Registration'
-}
+  headerTitle: 'Registration',
+};
 
 const styles = StyleSheet.create({
   container: {
